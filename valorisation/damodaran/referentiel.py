@@ -113,6 +113,7 @@ class ReferentielDamodaran:
         self._primes = None
         self._is_pays = None
         self._notations = None
+        self.jeux_indisponibles = set()   # (jeu, région) absents : hypothèses de repli utilisées
 
     # --- Jeux par industrie ---------------------------------------------------
     def table(self, jeu, region):
@@ -121,6 +122,14 @@ class ReferentielDamodaran:
             chemin = telechargement.chemin_local(jeu, region, self.dossier_cache)
             self._tables[cle] = lecture.lire_moyennes_industrie(chemin)
         return self._tables[cle][0]
+
+    def table_optionnelle(self, jeu, region):
+        """Comme `table`, mais renvoie None si le fichier est indisponible (repli géré par l'appelant)."""
+        try:
+            return self.table(jeu, region)
+        except telechargement.DonneesIndisponibles:
+            self.jeux_indisponibles.add((jeu, region))
+            return None
 
     def date_mise_a_jour(self, jeu="beta", region="Global"):
         self.table(jeu, region)
@@ -135,14 +144,14 @@ class ReferentielDamodaran:
 
     def _multiples(self, industrie, region):
         return {
-            "ev_ebitda": _valeur(self.table("ev_ebitda", region), industrie,
+            "ev_ebitda": _valeur(self.table_optionnelle("ev_ebitda", region), industrie,
                                  "Only positive EBITDA firms | EV/EBITDA", "EV/EBITDA"),
-            "ev_ebit": _valeur(self.table("ev_ebitda", region), industrie,
+            "ev_ebit": _valeur(self.table_optionnelle("ev_ebitda", region), industrie,
                                "Only positive EBITDA firms | EV/EBIT", "EV/EBIT"),
-            "ev_ventes": _valeur(self.table("ventes", region), industrie, "EV/Sales"),
-            "per": _valeur(self.table("per", region), industrie,
+            "ev_ventes": _valeur(self.table_optionnelle("ventes", region), industrie, "EV/Sales"),
+            "per": _valeur(self.table_optionnelle("per", region), industrie,
                            "Aggregate Mkt Cap/ Trailing Net Income (only money making firms)", "Trailing PE"),
-            "pbv": _valeur(self.table("pbv", region), industrie, "PBV"),
+            "pbv": _valeur(self.table_optionnelle("pbv", region), industrie, "PBV"),
         }
 
     def parametres_industrie(self, industrie, region):
@@ -153,8 +162,12 @@ class ReferentielDamodaran:
         if region == "Global":
             monde = dict(multiples)
         else:
-            nom_monde = industrie if industrie in self.table("beta", "Global").index else self.industrie_marche("Global")
-            monde = self._multiples(nom_monde, "Global")
+            beta_monde = self.table_optionnelle("beta", "Global")
+            if beta_monde is None:
+                monde = {}
+            else:
+                nom_monde = industrie if industrie in beta_monde.index else self.industrie_marche("Global")
+                monde = self._multiples(nom_monde, "Global")
         return ParametresIndustrie(
             industrie=industrie,
             region=region,
@@ -163,14 +176,14 @@ class ReferentielDamodaran:
             beta_endette=_valeur(beta, industrie, "Beta"),
             dette_sur_capitaux_propres=_valeur(beta, industrie, "D/E Ratio"),
             taux_is_effectif=_valeur(beta, industrie, "Effective Tax rate"),
-            roe=_valeur(self.table("pbv", region), industrie, "ROE"),
-            roic=_valeur(self.table("pbv", region), industrie, "ROIC"),
-            marge_operationnelle=_valeur(self.table("marges", region), industrie,
+            roe=_valeur(self.table_optionnelle("pbv", region), industrie, "ROE"),
+            roic=_valeur(self.table_optionnelle("pbv", region), industrie, "ROIC"),
+            marge_operationnelle=_valeur(self.table_optionnelle("marges", region), industrie,
                                          "Pre-tax Unadjusted Operating Margin"),
-            marge_ebitda=_valeur(self.table("marges", region), industrie, "EBITDA/Sales"),
-            ventes_sur_capital=_valeur(self.table("capex", region), industrie, "Sales/ Invested Capital (LTM)"),
-            croissance_fondamentale=_valeur(self.table("croissance", region), industrie, "Expected Growth in EBIT"),
-            cout_capital_usd=_valeur(self.table("wacc", region), industrie, "Cost of Capital"),
+            marge_ebitda=_valeur(self.table_optionnelle("marges", region), industrie, "EBITDA/Sales"),
+            ventes_sur_capital=_valeur(self.table_optionnelle("capex", region), industrie, "Sales/ Invested Capital (LTM)"),
+            croissance_fondamentale=_valeur(self.table_optionnelle("croissance", region), industrie, "Expected Growth in EBIT"),
+            cout_capital_usd=_valeur(self.table_optionnelle("wacc", region), industrie, "Cost of Capital"),
             date_mise_a_jour=self.date_mise_a_jour("beta", region),
             multiples_monde=monde,
             **multiples,

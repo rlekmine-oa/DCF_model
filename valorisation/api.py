@@ -8,6 +8,7 @@ Exemple :
 
 from . import correspondances, synthese
 from .damodaran.referentiel import ReferentielDamodaran
+from .damodaran.telechargement import DonneesIndisponibles
 from .entreprise import TYPES_NON_VALORISABLES, NonValorisable, charger_depuis_yfinance
 from .methodes import dcf, multiples
 from .selection import choisir_methodes
@@ -57,6 +58,15 @@ def evaluer_profil(profil, referentiel=None, industrie=None, region=None, taux_s
     alertes = list(profil.alertes)
 
     region = region or ref.region_damodaran(profil.pays)
+    try:
+        ref.table("beta", region)
+    except DonneesIndisponibles:
+        if region == "Global":
+            raise
+        alertes.append(f"Données Damodaran de la région {region} indisponibles (site injoignable, fichiers "
+                       "absents du cache) : données mondiales utilisées.")
+        region = "Global"
+        ref.table("beta", region)
     if industrie:
         nom_industrie, trouvee = industrie, True
     else:
@@ -70,6 +80,11 @@ def evaluer_profil(profil, referentiel=None, industrie=None, region=None, taux_s
         alertes.append(f"« {nom_industrie} » absente des données {region} : données mondiales utilisées.")
         region = "Global"
     parametres = ref.parametres_industrie(nom_industrie, region)
+
+    manquants = sorted(jeu for jeu, r in ref.jeux_indisponibles if r == region)
+    if manquants:
+        alertes.append(f"Données Damodaran indisponibles ({', '.join(manquants)}, région {region}) : "
+                       "hypothèses de repli utilisées pour ces paramètres.")
 
     plan = choisir_methodes(profil, nom_industrie, poids)
     alertes.extend(plan.ajustements)

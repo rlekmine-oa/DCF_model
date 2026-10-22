@@ -29,6 +29,23 @@ ticker ──► profil ──► industrie et région Damodaran ──► choix
 | **Multiples** | EV/EBITDA, EV/Ventes, P/E, P/BV agrégés de l'industrie ; multiple régional en valeur centrale, multiple mondial comme autre borne. |
 | **Sorties** | Fourchette pondérée, verdict (seuil ±15 %), **DCF inversé** (croissance intégrée dans le cours), matrice de sensibilité WACC × g, graphique en *football field*, alertes de qualité des données. |
 
+## Application (sans ligne de commande)
+
+`Valorisation.exe` est une application Windows autonome. Tapez un ou plusieurs tickers **ou noms de
+sociétés** (`SU.PA, Airbus, Crédit Agricole, AAPL`), appuyez sur Entrée : un tableau coloré par verdict
+s'affiche, avec le détail de la ligne sélectionnée (méthodes, coût du capital, DCF inversé, alertes). Un
+double-clic ouvre la note HTML de la société.
+
+- Les noms sont résolus par la recherche Yahoo Finance, accents compris, en privilégiant la **cotation
+  d'origine** plutôt que l'ADR américain (Sanofi → `SAN.PA` et non `SNY`).
+- Les notes sont enregistrées dans `Documents\Valorisation`, le cache Damodaran dans `%LOCALAPPDATA%\Valorisation`.
+- Si le site de Damodaran ne répond pas, l'application bascule sur les données mondiales en cache, avec une alerte.
+
+Pour construire l'exe : `construire_exe.bat` (PyInstaller, un seul fichier d'environ 90 Mo). Pour ouvrir la
+même fenêtre sans construire l'exe : `python Valorisation.pyw`.
+
+![Application](docs/img/interface.png)
+
 ## Démarrage rapide
 
 ```bash

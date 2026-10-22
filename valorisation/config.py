@@ -5,12 +5,23 @@ Chaque valeur peut aussi être surchargée à l'appel (voir `api.evaluer_ticker`
 """
 
 import os
+import sys
 from pathlib import Path
 
 RACINE_PROJET = Path(__file__).resolve().parent.parent
 
+# Application compilée (Valorisation.exe) : le code est extrait dans un dossier temporaire effacé à
+# la fermeture, le cache et les notes vont donc dans des dossiers utilisateur persistants.
+EXECUTABLE = bool(getattr(sys, "frozen", False))
+if EXECUTABLE:
+    _DONNEES_UTILISATEUR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "Valorisation"
+    DOSSIER_RAPPORTS_DEFAUT = Path.home() / "Documents" / "Valorisation"
+else:
+    _DONNEES_UTILISATEUR = RACINE_PROJET
+    DOSSIER_RAPPORTS_DEFAUT = RACINE_PROJET / "rapports"
+
 # Dossier de cache (fichiers Damodaran, taux sans risque). Jamais versionné.
-DOSSIER_CACHE = Path(os.environ.get("VALORISATION_CACHE", RACINE_PROJET / "cache"))
+DOSSIER_CACHE = Path(os.environ.get("VALORISATION_CACHE", _DONNEES_UTILISATEUR / "cache"))
 
 # --- Données Damodaran -------------------------------------------------------
 URL_DAMODARAN_DATASETS = "https://pages.stern.nyu.edu/~adamodar/pc/datasets/"

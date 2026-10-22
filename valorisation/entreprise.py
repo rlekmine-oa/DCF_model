@@ -182,7 +182,10 @@ def charger_depuis_yfinance(ticker):
     change = 1.0
     if devise_comptes != devise:
         change = marche.taux_change(devise_comptes, devise)
-        alertes.append(f"Comptes publiés en {devise_comptes}, convertis en {devise} au cours de {nombre(change, 4)}.")
+        alertes.append(f"Comptes publiés en {devise_comptes}, convertis en {devise} au cours de {nombre(change, 4)}. "
+                       f"Cotation hors de la devise des comptes (ADR ou double cotation) : le taux sans risque "
+                       f"{devise} s'applique à des flux convertis au comptant ; la cotation d'origine en "
+                       f"{devise_comptes} donne une valorisation plus cohérente.")
 
     annuel = _tableau(lambda: titre.income_stmt)
     glissant = _tableau(lambda: titre.ttm_income_stmt)

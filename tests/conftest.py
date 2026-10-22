@@ -35,6 +35,7 @@ class ReferentielFactice:
     """Remplace ReferentielDamodaran : mêmes méthodes, valeurs fixes."""
 
     def __init__(self, industries=None):
+        self.jeux_indisponibles = set()
         self.industries_connues = industries or {"Machinery": parametres(),
                                                  "Banks (Regional)": parametres(industrie="Banks (Regional)")}
 

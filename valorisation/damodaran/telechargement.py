@@ -52,9 +52,19 @@ def url_jeu(jeu, region=None):
     return config.URL_DAMODARAN_DATASETS + nom_fichier(jeu, region)
 
 
+DELAI_SECONDES = 20
+# Après un échec de connexion, le site est considéré injoignable pour le reste de la session :
+# on évite d'attendre l'expiration du délai pour chacun des fichiers suivants.
+_site_injoignable = False
+
+
+class DonneesIndisponibles(RuntimeError):
+    """Fichier Damodaran ni téléchargeable ni présent dans le cache."""
+
+
 def _telecharger(url, destination):
     requete = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (valorisation-entreprise)"})
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
+    with urllib.request.urlopen(requete, timeout=DELAI_SECONDES) as reponse:
         contenu = reponse.read()
     if not contenu.startswith(_SIGNATURES):
         raise ValueError(f"Réponse inattendue pour {url} (pas un fichier Excel)")
@@ -74,11 +84,24 @@ def chemin_local(jeu, region=None, dossier=None, forcer=False):
     frais = destination.exists() and (time.time() - destination.stat().st_mtime) < age_max
     if frais and not forcer:
         return destination
+    global _site_injoignable
     try:
-        _telecharger(url, destination)
+        if _site_injoignable:
+            raise ConnectionError("site de Damodaran injoignable lors d'une tentative précédente")
+        try:
+            _telecharger(url, destination)
+        except OSError:
+            time.sleep(2)  # le serveur de NYU Stern expire parfois : une seconde tentative
+            try:
+                _telecharger(url, destination)
+            except OSError:
+                _site_injoignable = True
+                raise
     except Exception as erreur:
         if destination.exists():
             print(f"[Damodaran] Échec du téléchargement de {url} ({erreur}) : cache périmé utilisé.")
             return destination
-        raise RuntimeError(f"Impossible de télécharger {url} et aucun cache local : {erreur}") from erreur
+        raise DonneesIndisponibles(
+            f"Données Damodaran « {destination.name} » indisponibles : le site de NYU Stern ne répond pas "
+            f"et le fichier n'est pas encore en cache. Réessayez plus tard.") from erreur
     return destination

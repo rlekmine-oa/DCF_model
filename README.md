@@ -43,10 +43,26 @@ ticker ──► company profile ──► Damodaran industry + region ──►
   as "Credit Services" (Mastercard) is not valued on P/BV either: fee-based financials are detected and
   re-routed.
 - **Checked against closed-form results.** With zero growth the DCF must equal the NOPAT perpetuity; with
-  constant growth and a consistent ROIC it must equal Gordon's formula. Both are unit-tested (44 offline
+  constant growth and a consistent ROIC it must equal Gordon's formula. Both are unit-tested (50 offline
   tests on synthetic data, no network).
 - **Data is downloaded, never committed.** Damodaran files are fetched on demand, cached for 30 days, and a
   stale cache is used if the site is down.
+
+## Desktop app (no command line)
+
+`Valorisation.exe` is a stand-alone Windows app: type one or several tickers **or company names**
+(`SU.PA, Airbus, Crédit Agricole, AAPL`), press Enter, and get a colour-coded results table, a detail panel
+(method values, cost of capital, reverse DCF, warnings) and one HTML note per company (double-click a row).
+
+- Company names are resolved with Yahoo Finance search, accents included, and the **home listing** is
+  preferred over US ADRs (Sanofi → `SAN.PA`, not `SNY`): the listing whose currency matches the accounts wins.
+- Notes are saved in `Documents\Valorisation`, the Damodaran cache in `%LOCALAPPDATA%\Valorisation`.
+- If the Damodaran site is unreachable, the app fails fast and falls back on cached global data, with a warning.
+
+Build it with `construire_exe.bat` (PyInstaller, one file, ~90 MB), or run the same window without building:
+`python Valorisation.pyw`.
+
+![Desktop app](docs/img/interface.png)
 
 ## Quick start
 
@@ -94,6 +110,7 @@ them.
 | `methodes/` | `dcf.py` (projection, sensitivity, reverse DCF), `multiples.py`, equity bridge |
 | `selection.py` · `synthese.py` | Method selection, weighting, verdict |
 | `rapport.py` · `cli.py` · `api.py` | One-page HTML note, command line, public API |
+| `interface.py` · `recherche.py` | Desktop app (Tkinter, background thread) and free-text → ticker resolution |
 
 ## Roadmap
 
