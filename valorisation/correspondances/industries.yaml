@@ -1,0 +1,171 @@
+# Industrie Yahoo Finance (classification Morningstar) -> industrie Damodaran.
+# Les clés sont comparées sans tenir compte de la casse ni de la ponctuation
+# (« Drug Manufacturers—General » et « Drug Manufacturers - General » sont équivalents).
+# Une industrie absente de cette table est valorisée avec la ligne « Total Market (without financials) ».
+
+# --- Matériaux de base ---
+Agricultural Inputs: Chemical (Specialty)
+Building Materials: Building Materials
+Chemicals: Chemical (Diversified)
+Specialty Chemicals: Chemical (Specialty)
+Lumber & Wood Production: Paper/Forest Products
+Paper & Paper Products: Paper/Forest Products
+Aluminum: Metals & Mining
+Copper: Metals & Mining
+Other Industrial Metals & Mining: Metals & Mining
+Gold: Precious Metals
+Silver: Precious Metals
+Other Precious Metals & Mining: Precious Metals
+Coking Coal: Coal & Related Energy
+Steel: Steel
+
+# --- Services de communication ---
+Advertising Agencies: Advertising
+Broadcasting: Broadcasting
+Entertainment: Entertainment
+Internet Content & Information: Software (Internet)
+Publishing: Publishing & Newspapers
+Electronic Gaming & Multimedia: Software (Entertainment)
+Telecom Services: Telecom. Services
+
+# --- Consommation cyclique ---
+Auto & Truck Dealerships: Retail (Automotive)
+Auto Manufacturers: Auto & Truck
+Auto Parts: Auto Parts
+Recreational Vehicles: Recreation
+Furnishings, Fixtures & Appliances: Furn/Home Furnishings
+Residential Construction: Homebuilding
+Textile Manufacturing: Apparel
+Apparel Manufacturing: Apparel
+Footwear & Accessories: Shoe
+Packaging & Containers: Packaging & Container
+Personal Services: Business & Consumer Services
+Restaurants: Restaurant/Dining
+Apparel Retail: Retail (Special Lines)
+Department Stores: Retail (General)
+Home Improvement Retail: Retail (Building Supply)
+Luxury Goods: Apparel
+Internet Retail: Retail (General)
+Specialty Retail: Retail (Special Lines)
+Gambling: Hotel/Gaming
+Leisure: Recreation
+Lodging: Hotel/Gaming
+Resorts & Casinos: Hotel/Gaming
+Travel Services: Business & Consumer Services
+
+# --- Consommation non cyclique ---
+Beverages - Brewers: Beverage (Alcoholic)
+Beverages - Wineries & Distilleries: Beverage (Alcoholic)
+Beverages - Non-Alcoholic: Beverage (Soft)
+Confectioners: Food Processing
+Farm Products: Farming/Agriculture
+Household & Personal Products: Household Products
+Packaged Foods: Food Processing
+Education & Training Services: Education
+Discount Stores: Retail (General)
+Food Distribution: Food Wholesalers
+Grocery Stores: Retail (Grocery and Food)
+Tobacco: Tobacco
+
+# --- Énergie ---
+Oil & Gas Drilling: Oilfield Svcs/Equip.
+Oil & Gas E&P: Oil/Gas (Production and Exploration)
+Oil & Gas Integrated: Oil/Gas (Integrated)
+Oil & Gas Midstream: Oil/Gas Distribution
+Oil & Gas Refining & Marketing: Oil/Gas (Integrated)
+Oil & Gas Equipment & Services: Oilfield Svcs/Equip.
+Thermal Coal: Coal & Related Energy
+Uranium: Metals & Mining
+
+# --- Services financiers ---
+Banks - Diversified: Bank (Money Center)
+Banks - Regional: Banks (Regional)
+Mortgage Finance: Financial Svcs. (Non-bank & Insurance)
+Capital Markets: Brokerage & Investment Banking
+Financial Data & Stock Exchanges: Information Services
+Insurance - Life: Insurance (Life)
+Insurance - Property & Casualty: Insurance (Prop/Cas.)
+Insurance - Reinsurance: Reinsurance
+Insurance - Specialty: Insurance (General)
+Insurance Brokers: Insurance (General)
+Insurance - Diversified: Insurance (General)
+Shell Companies: Investments & Asset Management
+Financial Conglomerates: Financial Svcs. (Non-bank & Insurance)
+Credit Services: Financial Svcs. (Non-bank & Insurance)
+Asset Management: Investments & Asset Management
+
+# --- Santé ---
+Biotechnology: Drugs (Biotechnology)
+Drug Manufacturers - General: Drugs (Pharmaceutical)
+Drug Manufacturers - Specialty & Generic: Drugs (Pharmaceutical)
+Healthcare Plans: Healthcare Support Services
+Medical Care Facilities: Hospitals/Healthcare Facilities
+Pharmaceutical Retailers: Retail (Special Lines)
+Health Information Services: Heathcare Information and Technology
+Medical Devices: Healthcare Products
+Medical Instruments & Supplies: Healthcare Products
+Diagnostics & Research: Healthcare Support Services
+Medical Distribution: Healthcare Support Services
+
+# --- Industrie ---
+Aerospace & Defense: Aerospace/Defense
+Specialty Business Services: Business & Consumer Services
+Consulting Services: Business & Consumer Services
+Rental & Leasing Services: Business & Consumer Services
+Security & Protection Services: Business & Consumer Services
+Staffing & Employment Services: Business & Consumer Services
+Conglomerates: Diversified
+Engineering & Construction: Engineering/Construction
+Infrastructure Operations: Engineering/Construction
+Building Products & Equipment: Building Materials
+Farm & Heavy Construction Machinery: Machinery
+Industrial Distribution: Retail (Distributors)
+Business Equipment & Supplies: Office Equipment & Services
+Specialty Industrial Machinery: Machinery
+Metal Fabrication: Steel
+Pollution & Treatment Controls: Environmental & Waste Services
+Tools & Accessories: Machinery
+Electrical Equipment & Parts: Electrical Equipment
+Airports & Air Services: Transportation
+Airlines: Air Transport
+Railroads: Transportation (Railroads)
+Marine Shipping: Shipbuilding & Marine
+Trucking: Trucking
+Integrated Freight & Logistics: Transportation
+Waste Management: Environmental & Waste Services
+
+# --- Immobilier ---
+Real Estate Services: Real Estate (Operations & Services)
+Real Estate - Development: Real Estate (Development)
+Real Estate - Diversified: Real Estate (General/Diversified)
+REIT - Healthcare Facilities: R.E.I.T.
+REIT - Hotel & Motel: R.E.I.T.
+REIT - Industrial: R.E.I.T.
+REIT - Office: R.E.I.T.
+REIT - Residential: R.E.I.T.
+REIT - Retail: Retail (REITs)
+REIT - Mortgage: R.E.I.T.
+REIT - Specialty: R.E.I.T.
+REIT - Diversified: R.E.I.T.
+
+# --- Technologie ---
+Information Technology Services: Computer Services
+Software - Application: Software (System & Application)
+Software - Infrastructure: Software (System & Application)
+Communication Equipment: Telecom. Equipment
+Computer Hardware: Computers/Peripherals
+Consumer Electronics: Electronics (Consumer & Office)
+Electronic Components: Electronics (General)
+Electronics & Computer Distribution: Retail (Distributors)
+Scientific & Technical Instruments: Electronics (General)
+Semiconductor Equipment & Materials: Semiconductor Equip
+Semiconductors: Semiconductor
+Solar: Green & Renewable Energy
+
+# --- Services aux collectivités ---
+Utilities - Independent Power Producers: Power
+Utilities - Renewable: Green & Renewable Energy
+Utilities - Regulated Water: Utility (Water)
+Utilities - Regulated Electric: Utility (General)
+Utilities - Regulated Gas: Utility (General)
+Utilities - Diversified: Utility (General)

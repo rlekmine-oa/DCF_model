@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+*.egg-info/
+
+# Données téléchargées (Damodaran, taux) et sorties générées : jamais versionnées
+cache/
+rapports/
+/*.json

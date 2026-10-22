@@ -1,0 +1,70 @@
+# Choix des méthodes de valorisation selon le profil sectoriel.
+#
+# Chaque profil donne les méthodes et leur poids dans la valeur centrale (somme = 1).
+# Méthodes disponibles : dcf, ev_ebitda, ev_ventes, per, pbv.
+# Le profil d'une entreprise vient de son industrie Damodaran (section « industries »),
+# « standard » par défaut. Deux ajustements sont ensuite appliqués automatiquement :
+#   - EBITDA négatif ou nul : ev_ebitda est remplacé par ev_ventes et la marge du DCF converge
+#     entièrement vers celle de l'industrie ;
+#   - profil « cyclique » : l'EBITDA et la marge de départ sont normalisés (moyenne historique).
+
+profils:
+  standard:
+    libelle: "Entreprise industrielle ou de services"
+    justification: >-
+      Flux de trésorerie prévisibles : le DCF (FCFF) donne la valeur intrinsèque, le multiple
+      EV/EBITDA de l'industrie la confronte au prix payé par le marché pour des actifs comparables.
+    methodes: {dcf: 0.6, ev_ebitda: 0.4}
+  cyclique:
+    libelle: "Entreprise cyclique (matières premières, automobile, transport…)"
+    justification: >-
+      Les résultats d'une année isolée reflètent la position dans le cycle : EBITDA et marges
+      sont normalisés sur l'historique disponible avant d'appliquer DCF et multiple.
+    methodes: {dcf: 0.5, ev_ebitda: 0.5}
+    normaliser: true
+  financiere:
+    libelle: "Banque, assurance ou gestion d'actifs"
+    justification: >-
+      La dette est une matière première et non un financement : EV, EBITDA et FCFF n'ont pas de
+      sens. La valeur se lit sur les fonds propres (P/BV, lié au ROE) et les bénéfices (P/E).
+    methodes: {pbv: 0.5, per: 0.5}
+  actifs:
+    libelle: "Foncière, promoteur ou société d'actifs"
+    justification: >-
+      La valeur réside dans les actifs détenus. En normes IFRS les immeubles de placement sont à
+      la juste valeur : le P/BV sert d'approximation de l'ANR, complété par l'EV/EBITDA.
+      Un ANR détaillé (actif par actif) est prévu en phase 2.
+    methodes: {pbv: 0.5, ev_ebitda: 0.5}
+
+industries:
+  financiere:
+    - Bank (Money Center)
+    - Banks (Regional)
+    - Brokerage & Investment Banking
+    - Financial Svcs. (Non-bank & Insurance)
+    - Insurance (General)
+    - Insurance (Life)
+    - Insurance (Prop/Cas.)
+    - Reinsurance
+    - Investments & Asset Management
+  actifs:
+    - R.E.I.T.
+    - Retail (REITs)
+    - Real Estate (Development)
+    - Real Estate (General/Diversified)
+  cyclique:
+    - Metals & Mining
+    - Steel
+    - Precious Metals
+    - Coal & Related Energy
+    - Oil/Gas (Integrated)
+    - Oil/Gas (Production and Exploration)
+    - Oilfield Svcs/Equip.
+    - Chemical (Basic)
+    - Paper/Forest Products
+    - Auto & Truck
+    - Rubber& Tires
+    - Shipbuilding & Marine
+    - Air Transport
+    - Homebuilding
+    - Building Materials
