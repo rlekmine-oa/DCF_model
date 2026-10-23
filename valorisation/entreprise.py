@@ -52,6 +52,7 @@ class ProfilEntreprise:
     capitaux_propres: float = NAN
     interets_minoritaires: float = 0.0
     participations: float = 0.0        # sociétés mises en équivalence et titres non consolidés
+    flux_tresorerie_libre: float = NAN # flux d'exploitation - investissements corporels (12 mois glissants)
     # Historique annuel (index : année, croissant) : chiffre_affaires, ebit, ebitda, resultat_net
     historique: pd.DataFrame = field(default_factory=pd.DataFrame)
     devise_comptes: str = None
@@ -161,6 +162,20 @@ def _tableau(fonction):
         return pd.DataFrame()
 
 
+def _flux_tresorerie_libre(glissant, annuel):
+    """Flux de trésorerie disponible : 12 mois glissants si publiés, sinon dernier exercice."""
+    for table in (glissant, annuel):
+        fcf = _ligne(table, ["Free Cash Flow"])
+        if math.isnan(fcf):
+            exploitation = _ligne(table, ["Operating Cash Flow"])
+            investissements = _ligne(table, ["Capital Expenditure"])
+            if not math.isnan(exploitation) and not math.isnan(investissements):
+                fcf = exploitation - abs(investissements)
+        if not math.isnan(fcf):
+            return fcf
+    return NAN
+
+
 def charger_depuis_yfinance(ticker):
     """Construit le profil d'une société cotée à partir de Yahoo Finance."""
     import yfinance as yf
@@ -190,6 +205,7 @@ def charger_depuis_yfinance(ticker):
     annuel = _tableau(lambda: titre.income_stmt)
     glissant = _tableau(lambda: titre.ttm_income_stmt)
     flux = _tableau(lambda: titre.cashflow)
+    flux_glissant = _tableau(lambda: titre.ttm_cashflow)
     # Bilan semestriel ou trimestriel le plus récent, sinon bilan annuel.
     bilan = _tableau(lambda: titre.quarterly_balance_sheet)
     if math.isnan(_ligne(bilan, ["Stockholders Equity", "Total Debt"])):
@@ -264,6 +280,7 @@ def charger_depuis_yfinance(ticker):
         capitaux_propres=_bilan(["Stockholders Equity", "Common Stock Equity"], NAN),
         interets_minoritaires=_bilan(["Minority Interest"]),
         participations=_bilan(["Long Term Equity Investment", "Investmentsin Associatesat Cost"]),
+        flux_tresorerie_libre=_flux_tresorerie_libre(flux_glissant, flux) * change,
         historique=historique,
         devise_comptes=devise_comptes,
         base_comptes=base_comptes,
